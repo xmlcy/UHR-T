@@ -27,9 +27,17 @@ namespace LCM.Examples
             LCM1 = new LCM.LCM("udpm://239.255.76.67:7667?ttl=255");
             //ipStateText.text = "GetLcmUrl" + "udpm://239.255.76.67:7667?ttl=255";
         }
-        public void facePublish(faceLcmData.faceData msg)
+        public void facePublish(picoLcmData.faceData msg)
         {
             LCM1.Publish("faceData", msg);
+        }
+        public void picoPublish(picoLcmData.picoData msg)
+        {
+            LCM1.Publish("picoData", msg);
+        }
+        public void bodyPublish(picoLcmData.bodyData msg)
+        {
+            LCM1.Publish("bodyData", msg);
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using LCM.LCM;
  
-namespace faceLcmData
+namespace picoLcmData
 {
     public sealed class faceData : LCM.LCM.LCMEncodable
     {
@@ -29,10 +29,10 @@ namespace faceLcmData
  
         public static ulong _hashRecursive(List<String> classes)
         {
-            if (classes.Contains("faceLcmData.faceData"))
+            if (classes.Contains("picoLcmData.faceData"))
                 return 0L;
  
-            classes.Add("faceLcmData.faceData");
+            classes.Add("picoLcmData.faceData");
             ulong hash = LCM_FINGERPRINT_BASE
                 ;
             classes.RemoveAt(classes.Count - 1);
@@ -65,9 +65,9 @@ namespace faceLcmData
             _decodeRecursive(ins);
         }
  
-        public static faceLcmData.faceData _decodeRecursiveFactory(LCMDataInputStream ins)
+        public static picoLcmData.faceData _decodeRecursiveFactory(LCMDataInputStream ins)
         {
-            faceLcmData.faceData o = new faceLcmData.faceData();
+            picoLcmData.faceData o = new picoLcmData.faceData();
             o._decodeRecursive(ins);
             return o;
         }
@@ -81,9 +81,9 @@ namespace faceLcmData
  
         }
  
-        public faceLcmData.faceData Copy()
+        public picoLcmData.faceData Copy()
         {
-            faceLcmData.faceData outobj = new faceLcmData.faceData();
+            picoLcmData.faceData outobj = new picoLcmData.faceData();
             outobj.bs = new float[(int) 72];
             for (int a = 0; a < 72; a++) {
                 outobj.bs[a] = this.bs[a];

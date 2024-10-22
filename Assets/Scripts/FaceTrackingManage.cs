@@ -51,7 +51,7 @@ public class FaceTrackingManage : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        faceLcmData.faceData msg = new faceLcmData.faceData();
+        picoLcmData.faceData msg = new picoLcmData.faceData();
         unsafe {
             for (int i = 0; i < 72; i++) {
                 msg.bs[i] = GetFaceTrackingData().blendShapeWeight[i]; 
