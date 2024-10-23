@@ -16,4 +16,4 @@ MonoBehaviour:
   systemDisplayFrequency: 0
   optimizeBufferDiscards: 1
   enableAppSpaceWarp: 0
-  systemSplashScreen: {fileID: 0}
+  systemSplashScreen: {fileID: 2800000, guid: 17d565bb4a7744b41b7e4dc7e3a09e35, type: 3}

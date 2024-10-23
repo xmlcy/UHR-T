@@ -9,11 +9,19 @@ using LCM.Examples;
 public class PicoInputManage : MonoBehaviour
 {
     private double mDisplayTime;
+    private InputDevice headsetDevice;
 
     // Start is called before the first frame update
     void Start()
     {
-       MyLCM._instance.initLCM(); 
+        var devices = new List<InputDevice>();
+        InputDevices.GetDevicesAtXRNode(XRNode.Head, devices);
+
+        if (devices.Count > 0)
+        {
+            headsetDevice = devices[0];
+        }
+        MyLCM._instance.initLCM(); 
     }
 
     // Update is called once per frame
@@ -159,6 +167,25 @@ public class PicoInputManage : MonoBehaviour
         msg.hand_rot[5] = rotr.y;
         msg.hand_rot[6] = rotr.z;
         msg.hand_rot[7] = rotr.w;
+
+        if (headsetDevice.isValid) {
+            if (headsetDevice.TryGetFeatureValue(CommonUsages.devicePosition, out Vector3 position)) {
+                msg.head_pos[0] = position.x;
+                msg.head_pos[1] = position.y;
+                msg.head_pos[2] = position.z;
+                transform.position = position;
+            }
+            if (headsetDevice.TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion rotation)) {
+                msg.head_euler[0] = rotation.eulerAngles.x;
+                msg.head_euler[1] = rotation.eulerAngles.y;
+                msg.head_euler[2] = rotation.eulerAngles.z;
+                msg.head_rot[0] = rotation.w;
+                msg.head_rot[1] = rotation.y;
+                msg.head_rot[2] = rotation.z;
+                msg.head_rot[3] = rotation.x;
+                transform.rotation = rotation;
+            }
+        }
 
         MyLCM._instance.picoPublish(msg);
     }

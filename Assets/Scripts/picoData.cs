@@ -33,16 +33,22 @@ namespace picoLcmData
         public float[] hand_pos;
         public float[] hand_euler;
         public float[] hand_rot;
+        public float[] head_pos;
+        public float[] head_euler;
+        public float[] head_rot;
  
         public picoData()
         {
             hand_pos = new float[6];
             hand_euler = new float[6];
             hand_rot = new float[8];
+            head_pos = new float[3];
+            head_euler = new float[3];
+            head_rot = new float[4];
         }
  
         public static readonly ulong LCM_FINGERPRINT;
-        public static readonly ulong LCM_FINGERPRINT_BASE = 0x1a41ff7a148ebbe9L;
+        public static readonly ulong LCM_FINGERPRINT_BASE = 0xceb623e238614b88L;
  
         static picoData()
         {
@@ -115,6 +121,18 @@ namespace picoLcmData
  
             for (int a = 0; a < 8; a++) {
                 outs.Write(this.hand_rot[a]); 
+            }
+ 
+            for (int a = 0; a < 3; a++) {
+                outs.Write(this.head_pos[a]); 
+            }
+ 
+            for (int a = 0; a < 3; a++) {
+                outs.Write(this.head_euler[a]); 
+            }
+ 
+            for (int a = 0; a < 4; a++) {
+                outs.Write(this.head_rot[a]); 
             }
  
         }
@@ -191,6 +209,21 @@ namespace picoLcmData
                 this.hand_rot[a] = ins.ReadSingle();
             }
  
+            this.head_pos = new float[(int) 3];
+            for (int a = 0; a < 3; a++) {
+                this.head_pos[a] = ins.ReadSingle();
+            }
+ 
+            this.head_euler = new float[(int) 3];
+            for (int a = 0; a < 3; a++) {
+                this.head_euler[a] = ins.ReadSingle();
+            }
+ 
+            this.head_rot = new float[(int) 4];
+            for (int a = 0; a < 4; a++) {
+                this.head_rot[a] = ins.ReadSingle();
+            }
+ 
         }
  
         public picoLcmData.picoData Copy()
@@ -245,6 +278,21 @@ namespace picoLcmData
             outobj.hand_rot = new float[(int) 8];
             for (int a = 0; a < 8; a++) {
                 outobj.hand_rot[a] = this.hand_rot[a];
+            }
+ 
+            outobj.head_pos = new float[(int) 3];
+            for (int a = 0; a < 3; a++) {
+                outobj.head_pos[a] = this.head_pos[a];
+            }
+ 
+            outobj.head_euler = new float[(int) 3];
+            for (int a = 0; a < 3; a++) {
+                outobj.head_euler[a] = this.head_euler[a];
+            }
+ 
+            outobj.head_rot = new float[(int) 4];
+            for (int a = 0; a < 4; a++) {
+                outobj.head_rot[a] = this.head_rot[a];
             }
  
             return outobj;
