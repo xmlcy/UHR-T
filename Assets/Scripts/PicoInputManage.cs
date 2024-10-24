@@ -173,7 +173,7 @@ public class PicoInputManage : MonoBehaviour
                 msg.head_pos[0] = position.x;
                 msg.head_pos[1] = position.y;
                 msg.head_pos[2] = position.z;
-                transform.position = position;
+                // transform.position = position;
             }
             if (headsetDevice.TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion rotation)) {
                 msg.head_euler[0] = rotation.eulerAngles.x;
