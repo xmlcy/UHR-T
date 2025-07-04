@@ -13,6 +13,8 @@ public class BodyTrackingManage : MonoBehaviour
 
     private BodyTrackingGetDataInfo bdi = new BodyTrackingGetDataInfo();
     private BodyTrackingData bd = new BodyTrackingData();
+    private BodyTrackerResult m_BodyTrackerResult;
+    private double mDisplayTime;
 
     // Start is called before the first frame update
     void Start()
@@ -41,51 +43,57 @@ public class BodyTrackingManage : MonoBehaviour
         if (trackingMode == MotionTrackerMode.BodyTracking)
         {
             // 获取各个身体节点的位置和方向数据
-            int ret = PXR_MotionTracking.GetBodyTrackingData(ref bdi, ref bd);
+            // int ret = PXR_MotionTracking.GetBodyTrackingData(ref bdi, ref bd);
+            mDisplayTime = PXR_System.GetPredictedDisplayTime();
+            var state = PXR_Input.GetBodyTrackingPose(mDisplayTime, ref m_BodyTrackerResult);
 
-            int euler_index = 0;
-            int pos_index = 0;
-            int rot_index = 0;
-            picoLcmData.bodyData msg = new picoLcmData.bodyData();
-
-
-            //原始数据
-            for (int i = 0; i < 24; i++)
+            // if (state == 1)
             {
-                Quaternion rotation1 = new Quaternion((float)bd.roleDatas[i].localPose.RotQx, (float)bd.roleDatas[i].localPose.RotQy, (float)bd.roleDatas[i].localPose.RotQz, (float)bd.roleDatas[i].localPose.RotQw);
-                Vector3 euler1 = rotation1.eulerAngles;
-                if (euler1.x >= 180)
+                int euler_index = 0;
+                int pos_index = 0;
+                int rot_index = 0;
+                picoLcmData.bodyData msg = new picoLcmData.bodyData();
+
+
+                //原始数据
+                for (int i = 0; i < 24; i++)
                 {
-                    euler1.x -= 360;
+                    Quaternion rotation1 = new Quaternion((float)m_BodyTrackerResult.trackingdata[i].localpose.RotQx, (float)m_BodyTrackerResult.trackingdata[i].localpose.RotQy, (float)m_BodyTrackerResult.trackingdata[i].localpose.RotQz, (float)m_BodyTrackerResult.trackingdata[i].localpose.RotQw);
+                    Vector3 euler1 = rotation1.eulerAngles;
+                    if (euler1.x >= 180)
+                    {
+                        euler1.x -= 360;
+                    }
+                    if (euler1.y >= 180)
+                    {
+                        euler1.y -= 360;
+                    }
+                    if (euler1.z >= 180)
+                    {
+                        euler1.z -= 360;
+                    }
+
+                    msg.pos[pos_index * 3] = (float)m_BodyTrackerResult.trackingdata[i].localpose.PosX;
+                    msg.pos[pos_index * 3 + 1] = (float)m_BodyTrackerResult.trackingdata[i].localpose.PosY;
+                    msg.pos[pos_index * 3 + 2] = (float)m_BodyTrackerResult.trackingdata[i].localpose.PosZ;
+                    pos_index += 1;
+
+                    msg.euler[euler_index * 3] = (float)euler1.x;
+                    msg.euler[euler_index * 3 + 1] = (float)euler1.y;
+                    msg.euler[euler_index * 3 + 2] = (float)euler1.z;
+                    euler_index += 1;
+
+                    msg.rot[rot_index * 4] = (float)m_BodyTrackerResult.trackingdata[i].localpose.RotQx;
+                    msg.rot[rot_index * 4 + 1] = (float)m_BodyTrackerResult.trackingdata[i].localpose.RotQy;
+                    msg.rot[rot_index * 4 + 2] = (float)m_BodyTrackerResult.trackingdata[i].localpose.RotQz;
+                    msg.rot[rot_index * 4 + 3] = (float)m_BodyTrackerResult.trackingdata[i].localpose.RotQw;
+                    rot_index += 1;
+
                 }
-                if (euler1.y >= 180)
-                {
-                    euler1.y -= 360;
-                }
-                if (euler1.z >= 180)
-                {
-                    euler1.z -= 360;
-                }
 
-                msg.pos[pos_index * 3] = (float)bd.roleDatas[i].localPose.PosX;
-                msg.pos[pos_index * 3 + 1] = (float)bd.roleDatas[i].localPose.PosY;
-                msg.pos[pos_index * 3 + 2] = (float)bd.roleDatas[i].localPose.PosZ;
-                pos_index = pos_index + 1;
-
-                msg.euler[euler_index * 3] = (float)euler1.x;
-                msg.euler[euler_index * 3 + 1] = (float)euler1.y;
-                msg.euler[euler_index * 3 + 2] = (float)euler1.z;
-                euler_index = euler_index + 1;
-
-                msg.rot[rot_index * 4] = (float)bd.roleDatas[i].localPose.RotQx;
-                msg.rot[rot_index * 4 + 1] = (float)bd.roleDatas[i].localPose.RotQy;
-                msg.rot[rot_index * 4 + 2] = (float)bd.roleDatas[i].localPose.RotQz;
-                msg.rot[rot_index * 4 + 3] = (float)bd.roleDatas[i].localPose.RotQw;
-                rot_index = rot_index + 1;
-
+                MyLCM._instance.bodyPublish(msg);
+                            
             }
-
-            MyLCM._instance.bodyPublish(msg);
         }
     }
 
